@@ -1,26 +1,28 @@
 # Linux Security Monitoring System
 
 ## Overview
-This project is a Bash-based Linux Security Monitoring System developed on Kali Linux.
+
+Linux Security Monitoring System is a Python-based project that monitors basic system security information.
 
 ## Features
-- Monitor active users
-- View login history
-- Check open ports
-- Analyze recent system error logs
-- Generate automated security reports
+
+* Logged-in User Monitoring
+* Open Port Monitoring
+* Failed Login Detection
+* CPU Usage Monitoring
+* Memory Usage Monitoring
+* Security Report Generation
 
 ## Technologies Used
-- Kali Linux
-- Bash Scripting
-- Linux Commands
-- journalctl
 
-## Run
+* Python
+* Linux
+* psutil
+* subprocess
 
-chmod +x security_monitor.sh
+## How to Run
 
-sudo ./security_monitor.sh
+python3 security_monitor.py
 
 ## Author
 
