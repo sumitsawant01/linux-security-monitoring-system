@@ -1,58 +1,62 @@
-#!/bin/bash
+import subprocess
+from datetime import datetime
+import psutil
 
-echo "================================="
-echo " Linux Security Monitoring Report"
-echo "================================="
+print("=================================")
+print(" Linux Security Monitoring System")
+print("=================================")
 
-echo ""
-echo "Current Date & Time:"
-date
+print("\nCurrent Date & Time:")
+print(datetime.now())
 
-echo ""
-echo "Logged In Users:"
-who
+# Logged In Users
+print("\nLogged In Users:")
+logged_users = subprocess.getoutput("who")
+print(logged_users)
 
-echo ""
-echo "Recent Error Logs:"
-sudo journalctl -p err -n 10 --no-pager
+# Open Ports
+print("\nOpen Ports:")
+open_ports = subprocess.getoutput("ss -tuln")
+print(open_ports)
 
-echo ""
-echo "Last Logins:"
-last | head -5
+# Failed Login Attempts
+print("\nFailed Login Attempts:")
+failed_logins = subprocess.getoutput(
+    "grep 'Failed password' /var/log/auth.log 2>/dev/null | tail -10"
+)
+if failed_logins:
+    print(failed_logins)
+else:
+    print("No failed login attempts found.")
 
-echo ""
-echo "Open Ports:"
-ss -tuln
+# CPU Usage
+print("\nCPU Usage:")
+cpu_usage = psutil.cpu_percent(interval=1)
+print(cpu_usage, "%")
 
-echo ""
-echo "Running Processes:"
-ps aux --sort=-%mem | head -10
+# Memory Usage
+print("\nMemory Usage:")
+memory_usage = psutil.virtual_memory().percent
+print(memory_usage, "%")
 
-echo ""
-echo "Saving report..."
+# Save Report
+report_name = f"security_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
 
-REPORT="security_report_$(date +%Y%m%d_%H%M%S).txt"
+with open(report_name, "w") as report:
+    report.write("===== Linux Security Monitoring Report =====\n")
+    report.write(f"Date & Time: {datetime.now()}\n\n")
 
-{
-echo "===== Linux Security Monitoring Report ====="
-date
-echo ""
-echo "Logged In Users:"
-who
-echo ""
-echo "Last Logins:"
-last | head -5
-echo ""
-echo "Open Ports:"
-ss -tuln
-echo ""
-echo "Recent Error Logs:"
-sudo journalctl -p err -n 10 --no-pager
-} > "$REPORT"
+    report.write("Logged In Users:\n")
+    report.write(logged_users + "\n\n")
 
-echo ""
-echo "================================="
-echo " Report Generated Successfully"
-echo "================================="
-echo "Report saved as: $REPORT"
+    report.write("Open Ports:\n")
+    report.write(open_ports + "\n\n")
 
+    report.write("Failed Login Attempts:\n")
+    report.write(failed_logins + "\n\n")
+
+    report.write(f"CPU Usage: {cpu_usage}%\n")
+    report.write(f"Memory Usage: {memory_usage}%\n")
+
+print("\nReport Generated Successfully!")
+print("Report saved as:", report_name)
